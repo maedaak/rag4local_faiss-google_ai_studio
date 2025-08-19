@@ -11,8 +11,8 @@ import datetime
 # gemini api key を環境変数で設定
 # Windows powershelllでは、$env:GEMINI_API_KEY="xxxx" 
 db_name = 'vectorstore.db'
-faiss_max_its = 3
-role = "あなたは優秀な大学図書館員です"
+faiss_max_its = 5
+system = "あなたは優秀な大学図書館員です"
 
 # query input
 print('your request > ', end="")
@@ -25,7 +25,7 @@ embeddings = HuggingFaceEmbeddings(
 db = FAISS.load_local(db_name, embeddings, allow_dangerous_deserialization=True)
 documents = db.similarity_search(query, k=faiss_max_its)
 
-# Mkae prompt
+# Make prompt
 documents_string = ""
 for document in documents:
     documents_string += f"""
@@ -56,7 +56,7 @@ contents = prompt.format(document=documents_string, query=query)
 # Goole AI Studio 
 client = genai.Client()
 config = types.GenerateContentConfig(
-    system_instruction=role,
+    system_instruction=system,
 )
 response = client.models.generate_content(
     model="gemini-2.5-flash",
